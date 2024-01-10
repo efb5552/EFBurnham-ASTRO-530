@@ -38,7 +38,7 @@ def planck(x,T,x_type="frequency"):
         B = B/(np.exp((h*c)/(lam*k_B*T)) - 1)
 
     if x_type == 'wave number': # converted to cgs wave number units (nu_tilde = 1/lam = nu/c) from eqn. 6.9 from Gray et. al 2022 (4th ed.)
-        n_tilde = x.copy() / units.cm
+        nu_tilde = x.copy() / (1*units.cm)
         B = 2*h*(c**2)*(nu_tilde**3)
         B = B/(np.exp((h*c*nu_tilde)/(k_B*T)) - 1)
 

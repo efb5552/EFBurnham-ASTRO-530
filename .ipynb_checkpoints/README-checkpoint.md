@@ -8,8 +8,7 @@ The repository is organized as follows (as of 01/10/2023):
 
 If you wish to run this code yourself, please ensure that the following packages are installed in your environment:
 - `os`
-- -`sys`
+- `sys`
 - `numpy`
 - `astropy`
 - `matplotlib`
-- 
