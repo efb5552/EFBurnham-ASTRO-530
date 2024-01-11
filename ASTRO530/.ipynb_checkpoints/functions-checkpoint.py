@@ -11,7 +11,7 @@ def planck(x,T,x_type="frequency"):
     - x_type (string): "frequency", "wavelength", or "wave number" (default is "frequency")
 
     Outputs:
-    - B (same type as x): vector of calculated intensity in cgs per specified frequency, wavelength, or wave number in x. 
+    - B (same type as x): vector of calculated intensity in erg/cm^2/Hz/s per specified frequency, wavelength, or wave number in x. 
     """
     
     if x_type not in ['frequency','wavelength','wave number']:
@@ -34,12 +34,14 @@ def planck(x,T,x_type="frequency"):
 
     if x_type == 'wavelength': # converted to cgs wavelength units (lam = c/nu) from eqn. 6.9 from Gray et. al 2022 (4th ed.)
         lam = x.copy() * units.cm
-        B = (2*h*c**2)/(lam**5)
+        B = (2*h*c)/(lam**3)
         B = B/(np.exp((h*c)/(lam*k_B*T)) - 1)
 
     if x_type == 'wave number': # converted to cgs wave number units (nu_tilde = 1/lam = nu/c) from eqn. 6.9 from Gray et. al 2022 (4th ed.)
-        nu_tilde = x.copy() / (1*units.cm)
-        B = 2*h*(c**2)*(nu_tilde**3)
+        nu_tilde = x.copy() #/ (1*units.cm)
+        B = 2*h*c*(nu_tilde**3)
         B = B/(np.exp((h*c*nu_tilde)/(k_B*T)) - 1)
+
+    B = B / (units.sr*units.Hz)
 
     return B

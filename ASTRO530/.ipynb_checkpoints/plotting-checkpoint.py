@@ -40,3 +40,4 @@ rcParams.update({'grid.linewidth': 1})
 
 # rcParams.update({'font.family': ['Times New Roman']})
 rcParams.update({'legend.edgecolor': '1'})
+rcParams.update({'legend.fontsize': 16})
