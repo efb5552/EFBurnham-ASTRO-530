@@ -85,14 +85,14 @@ def integrate_box(x, y):
 
 #######################
 
-def integrate_bounds(func,a,b,n=50,*args,**kwargs):
+def integrate_bounds(func,a,b,dx,*args,**kwargs):
     """
     Numerical integration of a given function using the midpoint method given a set of bounds.
 
     Parameters:
     - func: Function to be integrated.
     - a, b: lower and upper limit of integration.
-    - n: (optional) number of steps to integrate over (default 50). 
+    - dx: size of bins/slices to be integrated over. 
 
     Returns:
     - The approximate integral.
@@ -100,9 +100,14 @@ def integrate_bounds(func,a,b,n=50,*args,**kwargs):
 
     assert isinstance(a, (int,float,u.Quantity)), "Lower integration limit must be a number."
     assert isinstance(b, (int,float,u.Quantity)), "Upper integration limit must be a number."
-    assert isinstance(n, int), "Number of steps must be an integer."
-    assert n > 0, "Number of steps must greater than 0."
-    
+    # assert isinstance(dx, int), "Number of steps must be an integer."
+    # assert dx > 0, "Size of steps must greater than 0."
+
+    diff = abs(b.value-a.value)
+    try:
+        n = int(round(diff/dx,0))
+    except:
+        print("error... diff, dx:",diff,dx)
     x = np.linspace(a,b,n)
     y = func(x,*args,**kwargs)
 
