@@ -188,7 +188,7 @@ def plot_precisions_bdx(func,truth,file_name,*args,**kwargs):
         if i == 0:
             ax.set_ylabel("Precision")
 
-    plt.savefig(f"../Plots/{file_name}.svg")
+    plt.savefig(f"../Plots/{file_name}.pdf")
     plt.show()
 
 #######################
@@ -242,12 +242,12 @@ def plot_precisions_abdx(func,truth,file_name,*args,**kwargs):
     
         ax.loglog(values[i],prec_arrs[i],lw=4,c=['lightblue','cornflowerblue','indigo'][i])
         ax.scatter(values[i],prec_arrs[i],s=50,c=['lightblue','cornflowerblue','indigo'][i])
-        ax.set_xlabel([r"Lower Limit ($\mathrm{\mu m^{-1}}$)",r"Upper Limit ($\mathrm{\mu m^{-1}}$)","Size of Bins ($\mathrm{\mu m^{-1}}$)"][i])
+        ax.set_xlabel([r"Lower Limit",r"Upper Limit","Size of Bins"][i])
         ax.grid()
         if i > 0:
             ax.set_yticklabels([])
         if i == 0:
             ax.set_ylabel("Precision")
 
-    plt.savefig(f"../Plots/{file_name}.svg")
+    plt.savefig(f"../Plots/{file_name}.pdf")
     plt.show()

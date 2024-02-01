@@ -12,6 +12,7 @@ If you wish to run this code yourself, please ensure that the following packages
 - `sys`
 - `numpy`
 - `astropy`
+- `math`
 - `matplotlib`
 - `time`
 
