@@ -2,7 +2,7 @@ import numpy as np
 import astropy.units as u
 from matplotlib import pyplot as plt
 
-def planck(x,T=5000,x_type="frequency"):
+def planck(x,T,x_type="frequency"):
     """
     Planck intensity function.
     
@@ -18,7 +18,7 @@ def planck(x,T=5000,x_type="frequency"):
     if x_type not in ['frequency','wavelength','wave number']:
         raise ValueError(f'{x_type} is not a valid entry. Valid entries for x_type include "frequency" (default), "wavelength", or "wave number"')
     
-    assert T > 0, "Temperature must be T > 0 Kelvin"
+    # assert T > 0, "Temperature must be T > 0 Kelvin"
 
     from astropy.constants import h, c, k_B
 
@@ -44,18 +44,6 @@ def planck(x,T=5000,x_type="frequency"):
         
     B = (2*h*nu**3)/(c**2) # eqn. 6.9 from Gray et. al 2022 (4th ed.)
     B = B/(np.exp((h*nu)/(k_B*T)) - 1)
-
-    # if x_type == 'wavelength': # converted to cgs wavelength units (lam = c/nu) from eqn. 6.9 from Gray et. al 2022 (4th ed.)
-    #     lam = x.copy() * u.cm
-    #     B = (2*h*c)/(lam**3)
-    #     B = B/(np.exp((h*c)/(lam*k_B*T)) - 1)
-
-    # if x_type == 'wave number': # converted to cgs wave number units (nu_tilde = 1/lam = nu/c) from eqn. 6.9 from Gray et. al 2022 (4th ed.)
-    #     nu_tilde = x.copy() #/ (1*units.cm)
-    #     # nu_tilde = nu_tilde.to(1/u.cm)
-    #     B = 2*h*c*(nu_tilde**3)
-    #     B = B/(np.exp((h*c*nu_tilde)/(k_B*T)) - 1)
-
     B = B / (u.sr*u.Hz*u.s)
 
     return B
@@ -251,3 +239,30 @@ def plot_precisions_abdx(func,truth,file_name,*args,**kwargs):
 
     plt.savefig(f"../Plots/{file_name}.pdf")
     plt.show()
+
+def H_nu_tau(tau,S_nu,*args,**kwargs):
+
+    from scipy.integrate import simps 
+    from scipy.special import expn
+    
+    b = 10e2 # limits set from HW3 for maximum precision
+    a = 10e-18
+    dx = 10e-5
+
+    if tau != 0.0 and tau > a:
+        num = int(round((np.log10(b)-np.log10(tau))/dx,0))
+        t = np.logspace(np.log10(tau),np.log10(b),num)
+        term1 = 0.5*simps(S_nu(t,*args,**kwargs)*expn(2,t-tau),x=t) # integrate from tau to infty
+        
+        num = int(round(((np.log10(tau)-np.log10(a))/dx),0))
+        t = np.logspace(np.log10(a),np.log10(tau),num)
+        t[0] = 0
+        term2 = -0.5*simps(S_nu(t,*args,**kwargs)*expn(2,tau-t),x=t) # integrate from 0 to tau
+        H = term1 + term2
+
+    else:
+        num = int(round(b/dx,0))
+        t = np.linspace(tau,b,num)
+        H = 0.5*simps(S_nu(t,*args,**kwargs)*expn(2,t),x=t)
+
+    return H      
