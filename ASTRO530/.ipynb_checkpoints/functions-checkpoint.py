@@ -266,3 +266,33 @@ def H_nu_tau(tau,S_nu,*args,**kwargs):
         H = 0.5*simps(S_nu(t,*args,**kwargs)*expn(2,t),x=t)
 
     return H      
+
+def partition_function(species,T):
+    from scipy.optimize import curve_fit
+    import pandas as pd
+    import numpy as np
+
+    partition_functions = pd.read_csv("partition_functions_T.csv",delimiter=",") # modified table 
+
+    if species == 'H-': # only depends on ionization energy, filled valence shell
+        chi = 0.755 # eV
+        U = 1*10**(-(chi*(5040/T)))
+    elif species not in partition_functions.columns: # table is missing fully ionized elements, which have a constant partition function
+        U = 1.
+    else:
+        def exponential_decay(x, a, b, c):
+            return a * np.exp(-b * x) + c
+        
+        if species in partition_functions.columns[:-1]:
+            y_values = np.array(list(partition_functions[species][:-1].values))  # Extracting values from DataFrame column
+            thetas = partition_functions['theta'].values
+            nan_mask = ~np.isnan(y_values)  # Create mask to remove NaN values
+            y = y_values[nan_mask]
+            x_values = thetas[:-1][nan_mask]
+            x = np.array(x_values, dtype=float)
+    
+            popt, pcov = curve_fit(exponential_decay, x, y) # fitting the points
+            x_new = 5040/T
+            logU = exponential_decay(x_new, *popt) # returns log value of U
+            U = 10**logU
+    return U
